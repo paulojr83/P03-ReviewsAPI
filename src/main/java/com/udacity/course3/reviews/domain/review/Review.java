@@ -1,10 +1,10 @@
 package com.udacity.course3.reviews.domain.review;
 
-import com.udacity.course3.reviews.domain.comment.Comment;
 import com.udacity.course3.reviews.domain.product.Product;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 public class Review {
@@ -18,17 +18,19 @@ public class Review {
 
 	private int score;
 
-	@Column(length = 10000)
-	private String review;
+	@Column(name = "review_text", length = 10000)
+	private String reviewText;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+	@Column(name = "recommended")
+	private boolean recommended;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+	@Column(name = "created_At")
+	@CreationTimestamp
+	private LocalDateTime createdAt;
 
-	@OneToOne
-	private Comment comment;
+	@Column(name = "updated_At")
+	@CreationTimestamp
+	private LocalDateTime updatedAt;
 
 	@ManyToOne
 	private Product product;
@@ -48,30 +50,6 @@ public class Review {
 		this.reviewId = reviewId;
 	}
 
-	public int getScore() {
-		return score;
-	}
-
-	public void setScore(int score) {
-		this.score = score;
-	}
-
-	public Comment getComment() {
-		return comment;
-	}
-
-	public void setComment(Comment comment) {
-		this.comment = comment;
-	}
-
-	public Product getProduct() {
-		return product;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
 	public String getTitle() {
 		return title;
 	}
@@ -80,27 +58,51 @@ public class Review {
 		this.title = title;
 	}
 
-	public String getReview() {
-		return review;
+	public int getScore() {
+		return score;
 	}
 
-	public void setReview(String review) {
-		this.review = review;
+	public void setScore(int score) {
+		this.score = score;
 	}
 
-	public Date getCreatedAt() {
+	public String getReviewText() {
+		return reviewText;
+	}
+
+	public void setReviewText(String reviewText) {
+		this.reviewText = reviewText;
+	}
+
+	public boolean isRecommended() {
+		return recommended;
+	}
+
+	public void setRecommended(boolean recommended) {
+		this.recommended = recommended;
+	}
+
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public Date getUpdatedAt() {
+	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 }

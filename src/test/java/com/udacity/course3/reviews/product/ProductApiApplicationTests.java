@@ -105,7 +105,6 @@ public class ProductApiApplicationTests {
 
         comment.setComment("Teste esse produtos");
         comment.setCommentId(1L);
-        review.setComment(comment);
         reviews.add(review);
 
         return product;

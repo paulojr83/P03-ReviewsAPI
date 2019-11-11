@@ -3,9 +3,9 @@ create table review
     id              int auto_increment  primary key,
     title           varchar(255)                        not null,
     score           int                                 not null,
-    review          varchar(10000)                      not null,
-    createdAt       timestamp default CURRENT_TIMESTAMP not null,
-    updatedAt       timestamp default CURRENT_TIMESTAMP not null,
+    review_text      varchar(10000)                      not null,
+    created_At       timestamp default CURRENT_TIMESTAMP not null,
+    updated_At       timestamp default CURRENT_TIMESTAMP not null,
     product_id      int                                 not null
 );
 
