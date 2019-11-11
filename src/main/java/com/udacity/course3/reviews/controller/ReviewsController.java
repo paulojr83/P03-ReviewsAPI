@@ -1,16 +1,16 @@
 package com.udacity.course3.reviews.controller;
 
 import com.udacity.course3.reviews.domain.product.Product;
-import com.udacity.course3.reviews.domain.product.ProductRepository;
+import com.udacity.course3.reviews.domain.review.ReviewDocument;
+import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.domain.review.Review;
-import com.udacity.course3.reviews.domain.review.ReviewRepository;
-import com.udacity.course3.reviews.exceptions.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.udacity.course3.reviews.repository.ReviewRepository;
+import com.udacity.course3.reviews.service.ReviewMongoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpServerErrorException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,13 +19,14 @@ import java.util.List;
 @RestController
 public class ReviewsController {
 
-    private ReviewRepository reviewRepository;
-    private ProductRepository productRepository;
+    private final ReviewRepository reviewRepository;
+    private final ProductRepository productRepository;
+    private final ReviewMongoService reviewMongoService;
 
-    @Autowired
-    public ReviewsController(ReviewRepository reviewRepository, ProductRepository productRepository) {
+    public ReviewsController(ReviewRepository reviewRepository, ProductRepository productRepository, ReviewMongoService reviewMongoService) {
         this.reviewRepository = reviewRepository;
         this.productRepository = productRepository;
+        this.reviewMongoService = reviewMongoService;
     }
 
     /**
@@ -40,13 +41,21 @@ public class ReviewsController {
      * @return The created review or 404 if product id is not found.
      */
     @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.POST)
-    public ResponseEntity<?> createReviewForProduct(@PathVariable("productId") Long productId, @RequestBody Review review) {
-        Product product = productRepository.findById(productId).orElseThrow(NotFoundException::new);
-        review.setProduct(product);
-        reviewRepository.save(review);
+    public ResponseEntity<?> createReviewForProduct(@PathVariable("productId") Integer productId,
+                                                    @RequestBody Review review ) {
+        Product product = productRepository.findById(productId).orElse(null);
+        if (product != null) {
+            review.setProduct(product);
+            Review createdReview = reviewRepository.save(review);
 
-        return new ResponseEntity<>( review, HttpStatus.CREATED);
+            reviewMongoService.saveReview(createdReview);
+
+            return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
+
 
     /**
      * Lists reviews by product.
@@ -55,7 +64,21 @@ public class ReviewsController {
      * @return The list of reviews.
      */
     @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.GET)
-    public ResponseEntity<List<Review>> listReviewsForProduct(@PathVariable("productId") Long productId) {
-        return ResponseEntity.ok(reviewRepository.findAllByProduct(new Product(productId)));
+    public ResponseEntity<List<?>> listReviewsForProduct(@PathVariable("productId") Integer productId) {
+        Product product = productRepository.findById(productId).orElse(null);
+
+        if (product != null) {
+            List<Review> allJpaReviews = reviewRepository.findAllByProduct(product);
+            List<ReviewDocument> allMongoReviews = new ArrayList<>();
+
+            for (Review review : allJpaReviews) {
+                ReviewDocument mongoReview =
+                        reviewMongoService.retrieveReviewById(review.getReviewId());
+                allMongoReviews.add(mongoReview);
+            }
+            return new ResponseEntity<>(allMongoReviews, HttpStatus.FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

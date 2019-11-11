@@ -1,9 +1,9 @@
 package com.udacity.course3.reviews.controller;
 
 import com.udacity.course3.reviews.domain.comment.Comment;
-import com.udacity.course3.reviews.domain.comment.CommentRepository;
+import com.udacity.course3.reviews.repository.CommentRepository;
 import com.udacity.course3.reviews.domain.review.Review;
-import com.udacity.course3.reviews.domain.review.ReviewRepository;
+import com.udacity.course3.reviews.repository.ReviewRepository;
 import com.udacity.course3.reviews.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

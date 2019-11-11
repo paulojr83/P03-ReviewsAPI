@@ -1,17 +1,14 @@
 package com.udacity.course3.reviews.controller;
 
 import com.udacity.course3.reviews.domain.product.Product;
-import com.udacity.course3.reviews.domain.product.ProductRepository;
+import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 
-import java.net.URI;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Spring REST controller for working with product entity.
@@ -58,5 +55,15 @@ public class ProductsController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public List<Product> listProducts() {
         return productRepository.findAll();
+    }
+
+    @RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+    public void deleteProduct(@PathVariable("id") Long id) {
+        Product product = productRepository.findById(id).orElse(null);
+        if (product != null) {
+            productRepository.delete(product);
+        } else {
+            throw new HttpServerErrorException(HttpStatus.NOT_FOUND);
+        }
     }
 }
