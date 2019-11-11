@@ -1,6 +1,6 @@
 create table review
 (
-    id              int auto_increment  primary key,
+    review_id       int auto_increment  primary key,
     title           varchar(255)                        not null,
     score           int                                 not null,
     review_text      varchar(10000)                      not null,
