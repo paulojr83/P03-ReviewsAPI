@@ -8,16 +8,13 @@ import com.udacity.course3.reviews.domain.review.Review;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -76,13 +73,6 @@ public class ProductApiApplicationTests {
     public void listProducts() throws Exception {
         Product product = getProduct();
         mvc.perform(
-                post(new URI("/products"))
-                        .content(json.write(product).getJson())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated());
-
-        mvc.perform(
                 get(new URI("/products"))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
@@ -92,15 +82,7 @@ public class ProductApiApplicationTests {
 
 
     @Test
-    public void findCar() throws Exception {
-        Product product = getProduct();
-        mvc.perform(
-                post(new URI("/products"))
-                        .content(json.write(product).getJson())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated());
-
+    public void findById() throws Exception {
         mvc.perform(
                 get(new URI("/products/1"))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -109,27 +91,7 @@ public class ProductApiApplicationTests {
                 .andExpect(status().isOk());
     }
 
-
-    @Test
-    public void deleteCar() throws Exception {
-        Product product = getProduct();
-        mvc.perform(
-                post(new URI("/products"))
-                        .content(json.write(product).getJson())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated());
-
-        mvc.perform(
-                delete(new URI("/products/1"))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-
-                .andExpect(status().isNoContent());
-    }
-
-
-    private Product getProduct() {
+   private Product getProduct() {
         Product product = new Product();
         product.setProductId(1L);
         product.setName("Teste Produtos");
