@@ -78,7 +78,7 @@ public class ProductApiApplicationTests {
                 get(new URI("/products"))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("_embedded.products", hasSize(1)))
+                .andExpect(result -> hasSize(1))
                 .andExpect(status().isOk());
     }
 
@@ -89,7 +89,7 @@ public class ProductApiApplicationTests {
                 get(new URI("/products/1"))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("id", is(1)))
+                .andExpect(jsonPath("product_id", is(1)))
                 .andExpect(status().isOk());
     }
 

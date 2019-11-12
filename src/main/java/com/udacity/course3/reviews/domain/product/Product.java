@@ -1,7 +1,10 @@
 package com.udacity.course3.reviews.domain.product;
 
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -16,11 +19,13 @@ public class Product {
 
 	private String description;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+	@Column(name = "created_at")
+	@CreationTimestamp
+	private LocalDateTime createdAt;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+	@Column(name = "updated_at")
+	@CreationTimestamp
+	private LocalDateTime updatedAt;
 
 	public Product() {
 	}
@@ -54,19 +59,19 @@ public class Product {
 		this.description = description;
 	}
 
-	public Date getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public Date getUpdatedAt() {
+	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 }
