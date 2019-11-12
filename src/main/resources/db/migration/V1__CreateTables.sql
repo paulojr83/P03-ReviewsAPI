@@ -16,7 +16,7 @@ create table product
     name                varchar(255) not null,
     description         varchar(255) not null,
     createdAt           timestamp default CURRENT_TIMESTAMP null,
-    updatedAt           timestamp default CURRENT_TIMESTAMP null,
+    updatedAt           timestamp default CURRENT_TIMESTAMP null
 );
 
 -- auto-generated definition
@@ -27,5 +27,5 @@ create table comment
     comment             varchar(255)                        null,
     review_id           int                                 not null,
     createdAt           timestamp default CURRENT_TIMESTAMP null,
-    updatedAt           timestamp default CURRENT_TIMESTAMP null,
+    updatedAt           timestamp default CURRENT_TIMESTAMP null
 );

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.udacity.course3.reviews.controller.ProductsController;
 import com.udacity.course3.reviews.domain.comment.Comment;
 import com.udacity.course3.reviews.domain.product.Product;
+import com.udacity.course3.reviews.domain.product.ProductRepository;
 import com.udacity.course3.reviews.domain.review.Review;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -43,16 +45,16 @@ public class ProductApiApplicationTests {
     private JacksonTester<Product> json;
 
     @MockBean
-    private ProductsController productsController;
+    private ProductRepository productRepository;
 
     @Before
     public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
         Product product = getProduct();
         product.setProductId(1L);
-        given(productsController.createProduct(any())).willReturn(product);
-        given(productsController.findById(any())).willReturn(product);
-        given(productsController.listProducts()).willReturn(Collections.singletonList(product));
+        given(productRepository.save(any())).willReturn(product);
+        given(productRepository.findById(product.getProductId())).willReturn(Optional.of(product));
+        given(productRepository.findAll()).willReturn(Collections.singletonList(product));
 
     }
 
