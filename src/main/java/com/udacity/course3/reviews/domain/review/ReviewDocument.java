@@ -14,6 +14,12 @@ public class ReviewDocument {
 
 	private boolean recommended;
 
+	public ReviewDocument(Review review) {
+		this.reviewTitle = review.getTitle();
+		this.reviewText = review.getReviewText();
+		this.recommended = review.isRecommended();
+	}
+
 	public Integer getReviewId() {
 		return reviewId;
 	}

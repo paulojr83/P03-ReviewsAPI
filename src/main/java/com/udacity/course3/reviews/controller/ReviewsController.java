@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +42,13 @@ public class ReviewsController {
      * @return The created review or 404 if product id is not found.
      */
     @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.POST)
-    public ResponseEntity<?> createReviewForProduct(@PathVariable("productId") Integer productId,
-                                                    @RequestBody Review review ) {
+    public ResponseEntity<?> createReviewForProduct(@PathVariable("productId") Long productId,
+                                                    @Valid @RequestBody Review review ) {
         Product product = productRepository.findById(productId).orElse(null);
         if (product != null) {
             review.setProduct(product);
-            Review createdReview = reviewRepository.save(review);
+            Review reviewSaved = reviewRepository.save(review);
+            ReviewDocument createdReview = new ReviewDocument(reviewSaved);
 
             reviewMongoService.saveReview(createdReview);
 
@@ -64,7 +66,7 @@ public class ReviewsController {
      * @return The list of reviews.
      */
     @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.GET)
-    public ResponseEntity<List<?>> listReviewsForProduct(@PathVariable("productId") Integer productId) {
+    public ResponseEntity<List<?>> listReviewsForProduct(@PathVariable("productId") Long productId) {
         Product product = productRepository.findById(productId).orElse(null);
 
         if (product != null) {

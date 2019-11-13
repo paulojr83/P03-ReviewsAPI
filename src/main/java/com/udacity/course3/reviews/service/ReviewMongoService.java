@@ -6,5 +6,5 @@ public interface ReviewMongoService {
 
 	public void saveReview( ReviewDocument jpaReview);
 
-	public ReviewDocument retrieveReviewById(Integer reviewId);
+	public ReviewDocument retrieveReviewById(Long reviewId);
 }

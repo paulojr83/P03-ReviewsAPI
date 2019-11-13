@@ -24,11 +24,11 @@ public class Review {
 	@Column(name = "recommended")
 	private boolean recommended;
 
-	@Column(name = "created_At")
+	@Column(name = "created_at")
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
-	@Column(name = "updated_At")
+	@Column(name = "updated_at")
 	@CreationTimestamp
 	private LocalDateTime updatedAt;
 
