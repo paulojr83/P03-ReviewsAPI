@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
-public class ProductApiApplicationTests {
+public class ProductApplicationTests {
 
     @Autowired
     private MockMvc mvc;
