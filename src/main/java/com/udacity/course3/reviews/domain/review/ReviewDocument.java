@@ -1,12 +1,13 @@
 package com.udacity.course3.reviews.domain.review;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("reviews")
 public class ReviewDocument {
 
 	@Id
-	private Integer reviewId;
+	private Long reviewId;
 
 	private String reviewTitle;
 
@@ -14,17 +15,20 @@ public class ReviewDocument {
 
 	private boolean recommended;
 
+	public ReviewDocument() {
+	}
+
 	public ReviewDocument(Review review) {
 		this.reviewTitle = review.getTitle();
 		this.reviewText = review.getReviewText();
 		this.recommended = review.isRecommended();
 	}
 
-	public Integer getReviewId() {
+	public Long getReviewId() {
 		return reviewId;
 	}
 
-	public void setReviewId(Integer reviewId) {
+	public void setReviewId(Long reviewId) {
 		this.reviewId = reviewId;
 	}
 
