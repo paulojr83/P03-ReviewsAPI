@@ -1,11 +1,10 @@
 package com.udacity.course3.reviews.product;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.udacity.course3.reviews.controller.ProductsController;
+import com.fasterxml.jackson.databind.ObjectMapper; 
 import com.udacity.course3.reviews.domain.comment.Comment;
 import com.udacity.course3.reviews.domain.product.Product;
-import com.udacity.course3.reviews.domain.product.ProductRepository;
 import com.udacity.course3.reviews.domain.review.Review;
+import com.udacity.course3.reviews.repository.ProductRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
