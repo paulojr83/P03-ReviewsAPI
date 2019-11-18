@@ -1,9 +1,7 @@
 package com.udacity.course3.reviews.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.udacity.course3.reviews.domain.comment.Comment;
 import com.udacity.course3.reviews.domain.product.Product;
-import com.udacity.course3.reviews.domain.product.ProductRepository;
 import com.udacity.course3.reviews.domain.review.Review;
 import com.udacity.course3.reviews.domain.review.ReviewRepository;
 import org.junit.Before;
@@ -20,18 +18,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -74,6 +68,15 @@ public class ReviewsApplicationTests {
 
     @Test
     public void listReviewsForProduct() throws Exception {
+        Review review = getReview();
+        mvc.perform(
+                post(new URI("/reviews/products/{productId}"))
+                        .content(json.write(review).getJson())
+                        .param("productId","1")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated());
+
         mvc.perform(
                 get(new URI("/reviews/products/{productId}"))
                         .param("productId","1")
