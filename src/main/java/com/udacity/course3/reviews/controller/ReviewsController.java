@@ -11,18 +11,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 /**
  * Spring REST controller for working with review entity.
  */
 @RestController
+@RequestMapping("/reviews")
 public class ReviewsController {
 
-    private ReviewRepository reviewRepository;
-    private ProductRepository productRepository;
+    private final ReviewRepository reviewRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
     public ReviewsController(ReviewRepository reviewRepository, ProductRepository productRepository) {
         this.reviewRepository = reviewRepository;
         this.productRepository = productRepository;
@@ -39,8 +40,9 @@ public class ReviewsController {
      * @param productId The id of the product.
      * @return The created review or 404 if product id is not found.
      */
-    @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.POST)
-    public ResponseEntity<?> createReviewForProduct(@PathVariable("productId") Long productId, @Valid @RequestBody Review review) {
+    @PostMapping("/products/{productId}")
+    public ResponseEntity<?> createReviewForProduct(@Valid @PathVariable("productId") Long productId,
+                                                    @Valid @RequestBody Review review) {
         Product product = productRepository.findById(productId).orElseThrow(NotFoundException::new);
         review.setProduct(product);
         reviewRepository.save(review);
@@ -54,8 +56,8 @@ public class ReviewsController {
      * @param productId The id of the product.
      * @return The list of reviews.
      */
-    @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.GET)
-    public ResponseEntity<List<Review>> listReviewsForProduct(@PathVariable("productId") Long productId) {
+    @GetMapping("/products/{productId}")
+    public ResponseEntity<List<Review>> listReviewsForProduct(@Valid  @PathVariable("productId") Long productId) {
         return ResponseEntity.ok(reviewRepository.findAllByProduct(new Product(productId)));
     }
 }

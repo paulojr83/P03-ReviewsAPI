@@ -50,13 +50,11 @@ public class ProductApplicationTests {
     public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
         Product product = getProduct();
-        product.setProductId(1L);
         given(productRepository.save(any())).willReturn(product);
         given(productRepository.findById(product.getProductId())).willReturn(Optional.of(product));
         given(productRepository.findAll()).willReturn(Collections.singletonList(product));
 
     }
-
 
     @Test
     public void createProduct() throws Exception {
@@ -69,6 +67,23 @@ public class ProductApplicationTests {
                 .andExpect(status().isCreated());
     }
 
+    @Test
+    public void findById() throws Exception {
+        Product product = getProduct();
+        mvc.perform(
+                post(new URI("/products"))
+                        .content(json.write(product).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated());
+
+        mvc.perform(
+                get(new URI("/products/1"))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("productId", is(1)))
+                .andExpect(status().isOk());
+    }
 
     @Test
     public void listProducts() throws Exception {
@@ -90,40 +105,11 @@ public class ProductApplicationTests {
     }
 
 
-    @Test
-    public void findById() throws Exception {
-        Product product = getProduct();
-        mvc.perform(
-                post(new URI("/products"))
-                        .content(json.write(product).getJson())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated());
-
-        mvc.perform(
-                get(new URI("/products/1"))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("product_id", is(1)))
-                .andExpect(status().isOk());
-    }
-
-   private Product getProduct() {
+    private Product getProduct() {
         Product product = new Product();
-        product.setProductId(1L);
+       product.setProductId(1L);
         product.setName("Teste Produtos");
-        List<Review> reviews = new ArrayList<>();
-        Review review = new Review();
-
-        review.setReviewId(1L);
-        review.setScore(4);
-
-        Comment comment = new Comment();
-
-        comment.setComment("Teste esse produtos");
-        comment.setCommentId(1L);
-        reviews.add(review);
-
+        product.setDescription("Teste Description");
         return product;
     }
 
