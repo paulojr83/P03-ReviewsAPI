@@ -40,7 +40,6 @@ public class ReviewsDocumentApplicationTests {
     public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
         ReviewDocument review = getReviewDocument();
-        review.setReviewId(1L);
         given(reviewRepository.save(any())).willReturn(review);
         given(reviewRepository.findById(review.getReviewId())).willReturn(Optional.of(review));
         given(reviewRepository.findAll()).willReturn(Collections.singletonList(review));

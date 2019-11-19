@@ -100,6 +100,24 @@ public class ProductApplicationTests {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void deleteProduct() throws Exception{
+        Product product = getProduct();
+
+        mvc.perform(
+                post(new URI("/products"))
+                        .content(json.write(product).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated());
+
+        mvc.perform(
+                delete(new URI("/products/1"))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(result -> hasSize(1))
+                .andExpect(status().isOk());
+    }
 
     private Product getProduct() {
         Product product = new Product();

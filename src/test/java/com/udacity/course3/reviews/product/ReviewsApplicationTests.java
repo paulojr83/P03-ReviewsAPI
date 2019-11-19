@@ -83,11 +83,11 @@ public class ReviewsApplicationTests {
     }
 
 
-
     @Test
     public void listReviewsForProduct() throws Exception {
         Review review = getReview();
         Product product = getProduct();
+
         mvc.perform(
                 post(new URI("/products"))
                         .content(jsonProduct.write(product).getJson())
