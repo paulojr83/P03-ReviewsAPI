@@ -2,8 +2,11 @@ package com.udacity.course3.reviews.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.udacity.course3.reviews.domain.comment.Comment;
+import com.udacity.course3.reviews.domain.product.Product;
 import com.udacity.course3.reviews.domain.review.Review;
 import com.udacity.course3.reviews.repository.CommentRepository;
+import com.udacity.course3.reviews.repository.ProductRepository;
+import com.udacity.course3.reviews.repository.ReviewRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,12 +27,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -38,62 +39,129 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureJsonTesters
 public class CommentsApplicationTests {
 
-    @Autowired
-    private MockMvc mvc;
+	@Autowired
+	private MockMvc mvc;
 
-    private JacksonTester<Comment> json;
+	private JacksonTester<Comment> json;
 
-    @MockBean
-    private CommentRepository commentRepository;
+	private JacksonTester<Product> jsonProduct;
+	private JacksonTester<Review> jsonReview;
 
-    @Before
-    public void setup() {
-        JacksonTester.initFields(this, new ObjectMapper());
-        Comment comment = getComment();
-        comment.setCommentId(1L);
-        given(commentRepository.save(any())).willReturn(comment);
-        given(commentRepository.findById(comment.getCommentId())).willReturn(Optional.of(comment));
-        given(commentRepository.findAll()).willReturn(Collections.singletonList(comment));
-    }
+	@MockBean
+	private CommentRepository commentRepository;
 
-    @Test
-    public void createCommentForReview() throws Exception {
-        Comment comment = getComment();
-        mvc.perform(
-                post(new URI("/reviews/{reviewId}"))
-                        .content(json.write(comment).getJson())
-                        .param("reviewId", "1")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated());
-    }
+	@MockBean
+	private ReviewRepository reviewRepository;
+
+	@MockBean
+	private ProductRepository productRepository;
+
+	@Before
+	public void setup() {
+		JacksonTester.initFields(this, new ObjectMapper());
+		Comment comment = getComment();
+		given(commentRepository.save(any())).willReturn(comment);
+		given(commentRepository.findById(comment.getCommentId())).willReturn(Optional.of(comment));
+		given(commentRepository.findAll()).willReturn(Collections.singletonList(comment));
+
+		Product product = getProduct();
+		given(productRepository.save(any())).willReturn(product);
+		given(productRepository.findById(product.getProductId())).willReturn(Optional.of(product));
+		given(productRepository.findAll()).willReturn(Collections.singletonList(product));
+
+		Review review = getReview();
+		given(reviewRepository.save(any())).willReturn(review);
+		given(reviewRepository.findById(review.getReviewId())).willReturn(Optional.of(review));
+		given(reviewRepository.findAll()).willReturn(Collections.singletonList(review));
+	}
+
+	@Test
+	public void createCommentForReview() throws Exception {
+		Review review = getReview();
+		Product product = getProduct();
+		Comment comment = getComment();
+
+		mvc.perform(
+				post(new URI("/products"))
+						.content(jsonProduct.write(product).getJson())
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.accept(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isCreated());
+
+		mvc.perform(
+				post(new URI("/reviews/products/1"))
+						.content(jsonReview.write(review).getJson())
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.accept(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isCreated());
+
+		mvc.perform(
+				post(new URI("/comments/reviews/1"))
+						.content(json.write(comment).getJson())
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.accept(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isCreated());
+	}
 
 
-    @Test
-    public void listCommentsForReview() throws Exception {
-        mvc.perform(
-                get(new URI("/reviews/{reviewId}"))
-                        .param("reviewId", "1")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(result -> hasSize(1))
-                .andExpect(status().isOk());
-    }
+	@Test
+	public void listCommentsForReview() throws Exception {
 
-   private Comment getComment() {
-       Comment comment = new Comment();
-       comment.setCommentId(1L);
-       comment.setComment("Teste Comment");
-       comment.setTitle("Teste title");
+		Review review = getReview();
+		Product product = getProduct();
+		Comment comment = getComment();
 
-        Review review = new Review();
+		mvc.perform(
+				post(new URI("/products"))
+						.content(jsonProduct.write(product).getJson())
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.accept(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isCreated());
 
-        review.setReviewId(1L);
-        review.setScore(4);
+		mvc.perform(
+				post(new URI("/reviews/products/1"))
+						.content(jsonReview.write(review).getJson())
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.accept(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isCreated());
 
-        comment.setReview(review);
+		mvc.perform(
+				post(new URI("/comments/reviews/1"))
+						.content(json.write(comment).getJson())
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.accept(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isCreated());
 
-        return comment;
-    }
+		mvc.perform(
+				get(new URI("/comments/reviews/1"))
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.accept(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(result -> hasSize(1))
+				.andExpect(status().isOk());
+	}
 
+
+
+	private Review getReview() {
+		Review review = new Review();
+		review.setReviewId(1L);
+		review.setScore(4);
+		return review;
+	}
+
+	private Product getProduct() {
+		Product product = new Product();
+		product.setProductId(1L);
+		product.setName("Teste Produtos");
+		product.setDescription("Teste Description");
+		return product;
+	}
+
+	private Comment getComment() {
+		Comment comment = new Comment();
+		comment.setCommentId(1L);
+		comment.setComment("Teste Comment");
+		comment.setTitle("Teste title");
+		return comment;
+	}
 }

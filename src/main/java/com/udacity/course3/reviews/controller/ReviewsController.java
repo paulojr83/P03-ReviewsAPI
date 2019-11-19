@@ -11,20 +11,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.ArrayList;
+
 import java.util.List;
 
 /**
  * Spring REST controller for working with review entity.
  */
 @RestController
+@RequestMapping("/reviews")
 public class ReviewsController {
 
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final ReviewMongoService reviewMongoService;
 
-    public ReviewsController(ReviewRepository reviewRepository, ProductRepository productRepository, ReviewMongoService reviewMongoService) {
+    public ReviewsController(ReviewRepository reviewRepository,
+                             ProductRepository productRepository,
+                             ReviewMongoService reviewMongoService) {
         this.reviewRepository = reviewRepository;
         this.productRepository = productRepository;
         this.reviewMongoService = reviewMongoService;
@@ -41,15 +46,15 @@ public class ReviewsController {
      * @param productId The id of the product.
      * @return The created review or 404 if product id is not found.
      */
-    @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.POST)
+    @PostMapping("/reviews/products/{productId}")
     public ResponseEntity<?> createReviewForProduct(@PathVariable("productId") Long productId,
                                                     @Valid @RequestBody Review review ) {
         Product product = productRepository.findById(productId).orElse(null);
+
         if (product != null) {
             review.setProduct(product);
             Review reviewSaved = reviewRepository.save(review);
             ReviewDocument createdReview = new ReviewDocument(reviewSaved);
-
             reviewMongoService.saveReview(createdReview);
 
             return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
@@ -65,8 +70,9 @@ public class ReviewsController {
      * @param productId The id of the product.
      * @return The list of reviews.
      */
-    @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.GET)
-    public ResponseEntity<List<?>> listReviewsForProduct(@PathVariable("productId") Long productId) {
+
+    @GetMapping("/products/{productId}")
+    public ResponseEntity<List<ReviewDocument>> listReviewsForProduct(@Valid  @PathVariable("productId") Long productId) {
         Product product = productRepository.findById(productId).orElse(null);
 
         if (product != null) {
@@ -81,6 +87,7 @@ public class ReviewsController {
             return new ResponseEntity<>(allMongoReviews, HttpStatus.FOUND);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         }
     }
 }

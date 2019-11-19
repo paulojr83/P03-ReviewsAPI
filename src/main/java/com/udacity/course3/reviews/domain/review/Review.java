@@ -32,7 +32,8 @@ public class Review {
 	@CreationTimestamp
 	private LocalDateTime updatedAt;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id")
 	private Product product;
 
 	public Review() {

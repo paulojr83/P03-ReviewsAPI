@@ -3,6 +3,7 @@ package com.udacity.course3.reviews.product;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.udacity.course3.reviews.domain.product.Product;
 import com.udacity.course3.reviews.domain.review.Review;
+import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,56 +39,90 @@ public class ReviewsApplicationTests {
     private MockMvc mvc;
 
     private JacksonTester<Review> json;
+    private JacksonTester<Product> jsonProduct;
 
     @MockBean
     private ReviewRepository reviewRepository;
+
+    @MockBean
+    private ProductRepository productRepository;
 
     @Before
     public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
         Review review = getReview();
-        review.setReviewId(1L);
+
         given(reviewRepository.save(any())).willReturn(review);
         given(reviewRepository.findById(review.getReviewId())).willReturn(Optional.of(review));
         given(reviewRepository.findAll()).willReturn(Collections.singletonList(review));
+
+        Product product = getProduct();
+        given(productRepository.save(any())).willReturn(product);
+        given(productRepository.findById(product.getProductId())).willReturn(Optional.of(product));
+        given(productRepository.findAll()).willReturn(Collections.singletonList(product));
     }
 
 
     @Test
     public void createReviewForProduct() throws Exception {
         Review review = getReview();
+        Product product = getProduct();
         mvc.perform(
-                post(new URI("/reviews/products/{productId}"))
+                post(new URI("/products"))
+                        .content(jsonProduct.write(product).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated());
+
+        mvc.perform(
+                post(new URI("/reviews/products/1"))
                         .content(json.write(review).getJson())
-                        .param("productId","1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated());
     }
 
 
+
     @Test
     public void listReviewsForProduct() throws Exception {
+        Review review = getReview();
+        Product product = getProduct();
         mvc.perform(
-                get(new URI("/reviews/products/{productId}"))
-                        .param("productId","1")
+                post(new URI("/products"))
+                        .content(jsonProduct.write(product).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated());
+
+        mvc.perform(
+                post(new URI("/reviews/products/1"))
+                        .content(json.write(review).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated());
+
+        mvc.perform(
+                get(new URI("/reviews/products/1"))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(result -> hasSize(1))
                 .andExpect(status().isOk());
     }
 
-
    private Review getReview() {
-        Product product = new Product();
-        product.setProductId(1L);
-        product.setName("Teste Produtos");
         Review review = new Review();
         review.setReviewId(1L);
         review.setScore(4);
-        review.setProduct(product);
-
         return review;
+    }
+
+    private Product getProduct() {
+        Product product = new Product();
+        product.setProductId(1L);
+        product.setName("Teste Produtos");
+        product.setDescription("Teste Description");
+        return product;
     }
 
 }

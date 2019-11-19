@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -38,9 +39,9 @@ public class CommentsController {
      *
      * @param reviewId The id of the review.
      */
-    @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.POST)
-    public ResponseEntity<Comment> createCommentForReview(@PathVariable("reviewId") Long reviewId, @RequestBody Comment comment) {
-
+    @PostMapping("/reviews/{reviewId}")
+    public ResponseEntity<Comment> createCommentForReview(@Valid @PathVariable("reviewId") Long reviewId,
+                                                          @Valid @RequestBody Comment comment) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundException::new);
         comment.setReview(review);
         commenRepository.save(comment);
@@ -56,8 +57,8 @@ public class CommentsController {
      *
      * @param reviewId The id of the review.
      */
-    @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.GET)
-    public ResponseEntity<List<Comment>> listCommentsForReview(@PathVariable("reviewId") Long reviewId) {
+    @GetMapping("/reviews/{reviewId}")
+    public ResponseEntity<List<Comment>> listCommentsForReview(@Valid @PathVariable("reviewId") Long reviewId) {
         return ResponseEntity.ok(commenRepository.findAllByReview(new Review(reviewId)));
     }
 }
