@@ -56,7 +56,7 @@ public class ReviewsDocumentApplicationTests {
    private ReviewDocument getReviewDocument() {
 
        ReviewDocument review = new ReviewDocument();
-        review.setReviewId(1L);
+        review.setReviewId("dsdasdsadsadsadasdsa");
         review.setRecommended(true);
         review.setReviewText("Review text");
         review.setReviewTitle("Review title");

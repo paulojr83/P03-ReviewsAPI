@@ -22,7 +22,7 @@ public class ReviewMongoServiceImpl implements ReviewMongoService {
 	}
 
 	@Override
-	public ReviewDocument retrieveReviewById(Long reviewId) {
+	public ReviewDocument retrieveReviewById(String reviewId) {
 		ReviewDocument mongoReview = reviewMongoRepository.findById(reviewId)
 				.orElse(null);
 		return mongoReview;
