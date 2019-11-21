@@ -1,8 +1,10 @@
 package com.udacity.course3.reviews.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.udacity.course3.reviews.ReviewsApplication;
 import com.udacity.course3.reviews.domain.product.Product;
 import com.udacity.course3.reviews.domain.review.Review;
+import com.udacity.course3.reviews.product.config.H2TestProfileJPAConfig;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 import org.junit.Before;
@@ -30,9 +32,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
+@SpringBootTest(classes = {
+        ReviewsApplication.class,
+        H2TestProfileJPAConfig.class })
 public class ReviewsApplicationTests {
 
     @Autowired

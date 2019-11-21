@@ -23,7 +23,8 @@ public class Comment {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn( name = "review_id", referencedColumnName = "review_id" )
 	private Review review;
 
 	public Comment() {

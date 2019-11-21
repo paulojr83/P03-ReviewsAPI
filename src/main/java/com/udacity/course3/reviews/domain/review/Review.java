@@ -36,11 +36,11 @@ public class Review {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
-	public Review() {
-	}
-
 	public Review(Long reviewId) {
 		this.reviewId = reviewId;
+	}
+
+	public Review() {
 	}
 
 	public Long getReviewId() {

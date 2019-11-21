@@ -1,9 +1,11 @@
 package com.udacity.course3.reviews.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.udacity.course3.reviews.ReviewsApplication;
 import com.udacity.course3.reviews.domain.comment.Comment;
 import com.udacity.course3.reviews.domain.product.Product;
 import com.udacity.course3.reviews.domain.review.Review;
+import com.udacity.course3.reviews.product.config.H2TestProfileJPAConfig;
 import com.udacity.course3.reviews.repository.CommentRepository;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
@@ -17,13 +19,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -34,9 +35,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
+@SpringBootTest(classes = {
+		ReviewsApplication.class,
+		H2TestProfileJPAConfig.class })
 public class CommentsApplicationTests {
 
 	@Autowired

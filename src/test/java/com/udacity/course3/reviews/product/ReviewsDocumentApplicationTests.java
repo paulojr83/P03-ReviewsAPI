@@ -1,7 +1,9 @@
 package com.udacity.course3.reviews.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.udacity.course3.reviews.ReviewsApplication;
 import com.udacity.course3.reviews.domain.review.ReviewDocument;
+import com.udacity.course3.reviews.product.config.H2TestProfileJPAConfig;
 import com.udacity.course3.reviews.repository.ReviewMongoRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,9 +26,11 @@ import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
+@SpringBootTest(classes = {
+        ReviewsApplication.class,
+        H2TestProfileJPAConfig.class }) 
 public class ReviewsDocumentApplicationTests {
 
     @Autowired
