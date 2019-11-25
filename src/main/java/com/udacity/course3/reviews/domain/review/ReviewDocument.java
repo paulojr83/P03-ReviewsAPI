@@ -1,9 +1,13 @@
 package com.udacity.course3.reviews.domain.review;
 
+import com.udacity.course3.reviews.domain.comment.Comment;
+import com.udacity.course3.reviews.domain.comment.CommentDocument;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
+import java.util.List;
+import java.util.Set;
 
 @Document("reviews")
 public class ReviewDocument {
@@ -23,17 +27,20 @@ public class ReviewDocument {
 	@Column(name = "product_id")
 	private Long productId;
 
+	private List<CommentDocument> comments;
+
 	public ReviewDocument() {
 	}
 
-	public ReviewDocument(Review review, Long productId) {
+	public ReviewDocument(Review review, Long productId, Set<Comment> comments) {
 		this.reviewId = review.getReviewId().toString();
 		this.reviewTitle = review.getTitle();
 		this.reviewText = review.getReviewText();
 		this.recommended = review.isRecommended();
 		this.productId  = productId;
+		comments.forEach(comment ->  this.comments.add(new CommentDocument(comment) ) );
 	}
-
+ 
 	public String getReviewId() {
 		return reviewId;
 	}
@@ -65,4 +72,5 @@ public class ReviewDocument {
 	public void setRecommended(boolean recommended) {
 		this.recommended = recommended;
 	}
+
 }

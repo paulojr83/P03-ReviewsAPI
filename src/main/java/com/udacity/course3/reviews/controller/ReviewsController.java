@@ -1,5 +1,6 @@
 package com.udacity.course3.reviews.controller;
 
+import com.udacity.course3.reviews.domain.comment.Comment;
 import com.udacity.course3.reviews.domain.product.Product;
 import com.udacity.course3.reviews.domain.review.Review;
 import com.udacity.course3.reviews.domain.review.ReviewDocument;
@@ -16,6 +17,8 @@ import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Spring REST controller for working with review entity.
@@ -56,7 +59,9 @@ public class ReviewsController {
         Review saved = reviewRepository.save(review);
 
         if( saved.getReviewId() > 0 ){
-            ReviewDocument reviewDocument = new ReviewDocument(saved, productId);
+            Set<Comment> comments = reviewRepository.findById(saved.getReviewId()).get().getComments();
+
+            ReviewDocument reviewDocument = new ReviewDocument(saved, productId, comments);
             reviewMongoService.saveReview(reviewDocument);
         }
 
