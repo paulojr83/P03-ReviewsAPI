@@ -1,10 +1,12 @@
 package com.udacity.course3.reviews.domain.review;
 
+import com.udacity.course3.reviews.domain.comment.Comment;
 import com.udacity.course3.reviews.domain.product.Product;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 public class Review {
@@ -35,6 +37,9 @@ public class Review {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
 	private Product product;
+
+	@OneToMany(targetEntity=Comment.class, mappedBy="review", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<Comment> comments;
 
 	public Review(Long reviewId) {
 		this.reviewId = reviewId;
@@ -105,5 +110,13 @@ public class Review {
 
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	public Set<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<Comment> comments) {
+		this.comments = comments;
 	}
 }

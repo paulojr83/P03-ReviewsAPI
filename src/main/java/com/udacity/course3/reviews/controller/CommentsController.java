@@ -1,10 +1,13 @@
 package com.udacity.course3.reviews.controller;
 
 import com.udacity.course3.reviews.domain.comment.Comment;
+import com.udacity.course3.reviews.domain.review.ReviewDocument;
 import com.udacity.course3.reviews.repository.CommentRepository;
 import com.udacity.course3.reviews.domain.review.Review;
+import com.udacity.course3.reviews.repository.CommentsMongoRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 import com.udacity.course3.reviews.exceptions.NotFoundException;
+import com.udacity.course3.reviews.service.CommentMongoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +23,15 @@ import java.util.List;
 @RequestMapping("/comments")
 public class CommentsController {
 
-    private CommentRepository commenRepository;
-    private ReviewRepository reviewRepository;
+    private final CommentRepository commenRepository;
+    private final ReviewRepository reviewRepository;
+    private final CommentMongoService commentMongoService;
 
-    @Autowired
-    public CommentsController(CommentRepository commenRepository, ReviewRepository reviewRepository) {
+    public CommentsController(CommentRepository commenRepository, ReviewRepository reviewRepository,
+                              CommentMongoService commentMongoService) {
         this.commenRepository = commenRepository;
         this.reviewRepository = reviewRepository;
+        this.commentMongoService = commentMongoService;
     }
 
     /**
@@ -44,8 +49,12 @@ public class CommentsController {
                                                           @Valid @RequestBody Comment comment) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundException::new);
         comment.setReview(review);
-        commenRepository.save(comment);
-        return new ResponseEntity<>( comment, HttpStatus.CREATED);
+        Comment commentSaved = commenRepository.save(comment);
+
+        if( commentSaved.getCommentId() > 0 ){
+            commentMongoService.saveComment(commentSaved);
+        }
+        return new ResponseEntity<>( commentSaved, HttpStatus.CREATED);
     }
 
     /**

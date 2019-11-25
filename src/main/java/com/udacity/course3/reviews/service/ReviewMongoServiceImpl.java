@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ReviewMongoServiceImpl implements ReviewMongoService {
-	@Autowired
-	private ReviewMongoRepository reviewMongoRepository;
+
+	private final ReviewMongoRepository reviewMongoRepository;
+
+	public ReviewMongoServiceImpl(ReviewMongoRepository reviewMongoRepository) {
+		this.reviewMongoRepository = reviewMongoRepository;
+	}
 
 	@Override
 	public void saveReview(ReviewDocument jpaReview) {
